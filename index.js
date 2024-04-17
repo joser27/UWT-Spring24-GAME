@@ -31,6 +31,8 @@ collisionsMap.forEach((row, i) => {
                 position: {
                     x:j*Boundary.width + offset.x,
                     y:i*Boundary.height + offset.y,
+                    xOffset:0,
+                    yOffset:0,
                 }
             }))
         }
@@ -57,18 +59,26 @@ const player = new Sprite({
     position: {
         x: canvas.width / 2 - 768 / columns / 2, //Placement in the canvas,
         y: canvas.height / 2, //Placement in the canvas
+        xOffset: -60,
+        yOffset: -70,
     },
     image: playerImage,
+    direction: 0, // up:0,down:1,left:2,right:3
     frames: {
         maxWidth: 24,
-        maxHeight: 8
+        maxHeight: 8,
+        walking: {
+
+        }
     }
 })
 
 const background = new Sprite({
     position: {
         x: offset.x,
-        y: offset.y
+        y: offset.y,
+        xOffset: 0,
+        yOffset: 0,
     },
     image: image
 })
@@ -87,8 +97,6 @@ const keys = {
         pressed: false
     }
 }
-console.log(collisions)
-
 
 
 
@@ -118,15 +126,18 @@ function animate() {
 
     })
     
-    c.fillRect(player.position.x,player.position.y,player.width,player.height)
+    
     player.draw();
-
+    // c.fillStyle = 'black'
+    c.fillRect(player.position.x,player.position.y,player.width,player.height)
 
         // Movement
         let moving = true;
         player.moving = false;
         if (keys.w.pressed && lastKey === 'w') {
             player.moving = true;
+            player.direction = 0;
+            
             for (let i = 0; i <boundaries.length; i++) {
                 const boundary = boundaries[i];
                 if (rectangularCollision({
@@ -135,7 +146,9 @@ function animate() {
                         ...boundary,
                         position: {
                             x: boundary.position.x,
-                            y: boundary.position.y + 3
+                            y: boundary.position.y + 3,
+                            xOffset: 0,
+                            yOffset: 0,
                         }
                     }
                 })) {
@@ -153,6 +166,7 @@ function animate() {
         }
         else if (keys.a.pressed && lastKey === 'a') {
             player.moving = true;
+            player.direction = 2;
             for (let i = 0; i <boundaries.length; i++) {
                 const boundary = boundaries[i];
                 if (rectangularCollision({
@@ -161,7 +175,9 @@ function animate() {
                         ...boundary,
                         position: {
                             x: boundary.position.x + 3,
-                            y: boundary.position.y
+                            y: boundary.position.y,
+                            xOffset: 0,
+                            yOffset: 0,
                         }
                     }
                 })) {
@@ -180,6 +196,7 @@ function animate() {
         }
         else if (keys.s.pressed && lastKey === 's') {
             player.moving = true;
+            player.direction = 1;
             for (let i = 0; i <boundaries.length; i++) {
                 const boundary = boundaries[i];
                 if (rectangularCollision({
@@ -188,7 +205,9 @@ function animate() {
                         ...boundary,
                         position: {
                             x: boundary.position.x,
-                            y: boundary.position.y - 3
+                            y: boundary.position.y - 3,
+                            xOffset: 0,
+                            yOffset: 0,
                         }
                     }
                 })) {
@@ -207,6 +226,7 @@ function animate() {
         }
         else if (keys.d.pressed && lastKey === 'd') {
             player.moving = true;
+            player.direction = 3;
             for (let i = 0; i <boundaries.length; i++) {
                 const boundary = boundaries[i];
                 if (rectangularCollision({
@@ -215,7 +235,9 @@ function animate() {
                         ...boundary,
                         position: {
                             x: boundary.position.x -3,
-                            y: boundary.position.y
+                            y: boundary.position.y,
+                            xOffset: 0,
+                            yOffset: 0,
                         }
                     }
                 })) {
