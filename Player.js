@@ -1,5 +1,5 @@
 
-
+let isCheating = false;
 const PlayerConstants = {
     MOVESPEED: 4,
     RUNNING_UP: 4,
@@ -51,7 +51,7 @@ const PLAYER_DIALOG = {
 let introSceneArray = [1,2,3,4,5,6]
 let sceneIntroPointer = 0;
 
-let WizardSceneArray = [0,1,2,3,4,5,6]
+let WizardSceneArray = [0,1,2,3,4,5,6,7,8,9,10]
 let WizardScenePointer = 0;
 
 class Player {
@@ -64,11 +64,14 @@ class Player {
         this.image.src = 'Human-Worker-Cyan.png'
         this.width = this.image.width/24/2;
         this.height = this.image.height/8/2;
-        this.hitBox = new Rectangle(67*104,3*104,this.width/2,this.height/2);//spawn67*104,3*104
+        this.hitBox = new Rectangle(67*104,3*104,this.width/2,this.height/2);//spawn=67*104,3*104//Cave 7,4
         this.moving = false;
         this.readyToGoOut = false;
         this.canMove = true;
+        this.hasMoved = false;
         this.attackHitBox = new Rectangle(this.hitBox.x,this.hitBox.y,50,50)
+        this.hasWizardsWand = false;
+        this.gaveWizardWand = false;
 
         this.villagerImage = new Image();
         this.villagerImage.src = 'images/VillagerProfile1.png'
@@ -76,7 +79,7 @@ class Player {
         this.wizardImage = new Image();
         this.wizardImage.src = 'images/WizardProfile.png'
         this.health = 100;
-
+        this.swordSFX = new Audio('swing-sword.mp3')
     }
 
     /*
@@ -88,7 +91,7 @@ class Player {
 
 
 
-        console.log(this.hitBox.x)
+        //console.log(this.hitBox.x)
         if (this.hitBox.y<1200 && this.hitBox.x<6000) {
             c.fillStyle = 'red';
             c.strokeRect(this.hitBox.x-20-BoarderOffset.xLvlOffset,this.hitBox.y-80-BoarderOffset.yLvlOffset,100,30)
@@ -136,7 +139,15 @@ class Player {
                     c.font = "40px 'Comic Sans MS', sans-serif";
                     c.fillText("'E' to Speak ", GameController.gameWidth/2-60, GameController.gameHeight/2/2, 200);
                     if (Player.UsedInteractKey) {
-                        WizardScenePointer = 1;
+                        
+                        
+                        if (this.hasWizardsWand===false) {
+                            console.log("no")
+                            WizardScenePointer = 1;
+                        } else {
+                            console.log("ya")
+                            WizardScenePointer = 7;
+                        }
                     }
                 }
             }
@@ -184,6 +195,7 @@ class Player {
 
 
         if (Player.isAttacking) {
+            this.swordSFX.play();
             switch(Animations.facingDir) {
                 case 0:
                     
@@ -211,10 +223,14 @@ class Player {
             }
             Animations.aniCol=5
         } else {
+            
             this.attackHitBox.x = 0
             this.attackHitBox.y = 0
             Animations.aniCol=0
         }
+        if (!Player.isAttacking && !this.moving) {
+            Animations.aniIndex=0
+        } 
         c.drawImage(
             this.image,  
             this.image.width/24 * (Animations.aniCol + Animations.aniIndex),          
@@ -245,7 +261,9 @@ class Player {
             tempHitBox.y = tempHitBox.y - PlayerConstants.MOVESPEED;
             boundaries.forEach(boundary => {
                 if (tempHitBox.intersects(boundary) && boundary.isSolid) {
-                    //this.moving = false;
+                    if (!isCheating) {
+                        this.moving = false;
+                    }
                 }
             });
             
@@ -261,7 +279,9 @@ class Player {
             tempHitBox.x = tempHitBox.x - PlayerConstants.MOVESPEED;
             boundaries.forEach(boundary => {
                 if (tempHitBox.intersects(boundary) && boundary.isSolid) {
-                    //this.moving = false;
+                    if (!isCheating) {
+                        this.moving = false;
+                    }
                 }
             }) 
             if (this.moving) {
@@ -276,7 +296,9 @@ class Player {
             tempHitBox.y = tempHitBox.y + PlayerConstants.MOVESPEED;
             boundaries.forEach(boundary => {
                 if (tempHitBox.intersects(boundary) && boundary.isSolid) {
-                    //this.moving = false;
+                    if (!isCheating) {
+                        this.moving = false;
+                    }
                 }
             }) 
 
@@ -291,7 +313,10 @@ class Player {
             tempHitBox.x = tempHitBox.x + PlayerConstants.MOVESPEED;
             boundaries.forEach(boundary => {
                 if (tempHitBox.intersects(boundary) && boundary.isSolid) {
-                    //this.moving = false;
+                    if (!isCheating) {
+                        this.moving = false;
+                    }
+                    
                 }
             }) 
 
@@ -301,6 +326,7 @@ class Player {
         }
         
         if (this.moving || Player.isAttacking) {
+            this.hasMoved=true;
             if (GameController.showHitBoxes) {
                 c.fillStyle = 'rgba(0,0,255,0.5)'
                 c.fillRect(tempHitBox.x - BoarderOffset.xLvlOffset,tempHitBox.y - BoarderOffset.yLvlOffset,tempHitBox.width,tempHitBox.height)    
@@ -389,7 +415,7 @@ class Player {
     }
 
     wizardDialog() {
-        if (WizardScenePointer>0) {
+        if (WizardScenePointer>0 && WizardScenePointer<7) {
             this.canMove = false;
             c.fillStyle = 'rgba(100,100,100,0.5)'
             c.fillRect(0,GameController.gameHeight/1.5,GameController.gameWidth,GameController.gameHeight)
@@ -436,11 +462,44 @@ class Player {
                 c.fillText("seem to come from. Just be careful, they're trickier than they look.", 30,450,undefined)
                 c.fillText("Press 'i' for next dialog", 120,560,undefined)  
             }
-            if ((WizardSceneArray[WizardScenePointer] > 5)) {
+            if ((WizardSceneArray[WizardScenePointer] === 6)) {
                 this.canMove = true;
                 WizardScenePointer=0;
             }
+        } 
+        if (WizardScenePointer>=7 && WizardScenePointer < 9) {
+            this.canMove = false;
+            c.fillStyle = 'rgba(100,100,100,0.5)'
+            c.fillRect(0,GameController.gameHeight/1.5,GameController.gameWidth,GameController.gameHeight)
+            c.drawImage(this.wizardImage, GameController.gameWidth/2 +100,GameController.gameHeight/2 - GameController.gameHeight/8,400,300);
+
+            if (WizardSceneArray[WizardScenePointer] === 7) {
+                c.fillStyle = 'black';
+                c.font = "22px 'Comic Sans MS', sans-serif";
+                c.fillText("Wizard: By the stars! You've returned with my wand!", 30, 420, undefined);
+                c.fillText("I've been trying to reclaim it for ages! You have my deepest", 30, 450, undefined);
+                c.fillText("gratitude.", 30, 480, undefined);
+                c.fillStyle = 'black';
+                c.font = "20px 'Comic Sans MS', sans-serif";
+                c.fillText("Press 'i' for next dialog", 120, 560, undefined);
+            }
+            
+            if (WizardSceneArray[WizardScenePointer] === 8) {
+                c.fillStyle = 'black';
+                c.font = "22px 'Comic Sans MS', sans-serif";
+                c.fillText("Wizard: Now, let me fulfill my promise. With the power ", 30, 420, undefined);
+                c.fillText("of my magic, I shall summon forth the Spring Bloom", 30, 450, undefined);
+                c.fillText("Orchid for the festival!", 30, 480, undefined);
+                c.fillStyle = 'black';
+                c.font = "20px 'Comic Sans MS', sans-serif";
+                c.fillText("Press 'i' for next dialog", 120, 560, undefined);
+            }
         }
+        if (WizardSceneArray[WizardScenePointer] === 9) {
+            this.canMove=true;
+            this.gaveWizardWand=true;
+        }
+
     }
 
 }

@@ -2,7 +2,8 @@
 const GAME_STATES = {
     PLAYING: 'PLAYING',
     MENU: 'MENU',
-    GAME_OVER: 'GAME_OVER'
+    GAME_OVER: 'GAME_OVER',
+    GAME_VICTORY: 'GAME_VICTORY'
 };
 
 
@@ -19,6 +20,7 @@ class GameController {
         this.menu = new Menu();
         this.intro = new Intro();
         this.gameOver = new GameOver();
+        this.celebration = new Celebration();
     }
 
 
@@ -37,6 +39,9 @@ class GameController {
         }
         if (GameController.GameState === GAME_STATES.GAME_OVER) {
             this.gameOver.draw();
+        }
+        if (GameController.GameState === GAME_STATES.GAME_VICTORY) {
+            this.celebration.draw();
         }
     }
 

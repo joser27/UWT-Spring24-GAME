@@ -53,6 +53,5 @@ class Intro {
             c.fillRect(0,GameController.gameHeight/1.5,GameController.gameWidth,GameController.gameHeight)
             c.drawImage(this.image6, GameController.gameWidth/2,GameController.gameHeight/2 - GameController.gameHeight/4,500,400);
         }
-        
     }
 }

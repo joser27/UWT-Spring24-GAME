@@ -3,47 +3,98 @@ class Game {
         this.levelLoader = new LevelLoader();
         this.player = new Player();
         this.villager = new Character('Human-Worker-Red.png', 13*104, 30*104)
-        this.slime1 = new Slime(51,7,this.player, 1, 400);
-        this.slime2 = new Slime(51,5,this.player, 1.5, 400);
-        this.slime3 = new Slime(14,5,this.player, 1, 300);
-        this.slime4 = new Slime(22,5,this.player, 1, 300);
+        this.slime1 = new Slime(51,7,this.player);
+        this.slime2 = new Slime(51,5,this.player);
+        this.slime3 = new Slime(14,5,this.player);
+        this.slime4 = new Slime(22,5,this.player);
+        this.gameSound = new Audio('Forest.wav');
+        this.caveSound = new Audio('enter-the-cave.mp3');
+        this.playerIsInCave = false;
+        this.playerImage = new Image();
+        this.playerImage.src = 'images/VillagerProfile2.png'
+
+        this.isPlayingGameMusic = false;
+
 
         this.slimes = [this.slime1, this.slime2, this.slime3, this.slime4,];
 
     }
 
+    playGameMusic() {
+        if (this.player.hasMoved) {
+            if (this.isPlayingGameMusic===false) {
+                this.isPlayingGameMusic=true;
+                
+                this.gameSound.loop = true;
+                this.gameSound.play();
+            }
+        }
+    }
     draw() {
+        if (this.player.gaveWizardWand) {
+            GameController.GameState = GAME_STATES.GAME_VICTORY; 
+        }
+
+        if (this.player.hitBox.x<58*104 && this.player.hitBox.y<11*104) {
+            this.playerIsInCave=true;
+            this.caveSound.loop = true;
+            this.caveSound.play();
+            this.isPlayingGameMusic=false
+            this.gameSound.pause();
+        } else {
+            this.playerIsInCave=false;
+            this.playGameMusic();
+            this.caveSound.pause();
+        }
 
         this.levelLoader.draw()
         this.player.draw();
-        // this.slime1.draw();
-        // this.slime2.draw();
-        // this.slime3.draw();
-        // this.slime4.draw();
-        this.adjustSlimePositions();
-        if (this.player.health<0) {
-            GameController.GameState = GAME_STATES.GAME_OVER; 
+        if (this.slimes.length>0) {
+
+            this.adjustSlimePositions();
+            if (this.player.health<0) {
+                GameController.GameState = GAME_STATES.GAME_OVER; 
+            }
+    
+            this.slimes.forEach(slime => {
+                slime.draw();
+                
+                // Check for player attack collision
+                if (slime.hitBox.intersects(this.player.attackHitBox)) {
+                    if (slime.health>0) {
+                        slime.health--;
+                    }
+                }
+            
+                // Check if slime is dead
+                if (slime.health <= 0) {
+                    slime.isDead = true;
+                    
+                }
+            });
+            
+            
+            // Remove dead slimes from the array
+            this.slimes = this.slimes.filter(slime => !slime.isRemoved);
+        } else {
+            this.player.hasWizardsWand=true;
+            
         }
 
-        this.slimes.forEach(slime => {
-            slime.draw();
-            
-            // Check for player attack collision
-            if (slime.hitBox.intersects(this.player.attackHitBox)) {
-                slime.health--;
-            }
-        
-            // Check if slime is dead
-            if (slime.health < 0) {
-                slime.isDead = true;
-            }
-        });
-        
-        // Remove dead slimes from the array
-        this.slimes = this.slimes.filter(slime => !slime.isDead);
-        
-
         this.levelLoader.drawOverhang()
+        if (this.playerIsInCave) {
+            if (this.player.hasWizardsWand) {
+                c.fillStyle = 'rgba(100,100,100,0.5)'
+                c.fillRect(0,GameController.gameHeight/1.5,GameController.gameWidth,GameController.gameHeight)
+                c.drawImage(this.playerImage, GameController.gameWidth/2+100,GameController.gameHeight/2,400,300);
+    
+                c.fillStyle = 'black'
+                c.font = "40px 'Comic Sans MS', sans-serif";
+                c.fillText("I've found the Wizard's Wand!", 30,450,undefined);
+
+            }
+        }
+
     }
 
 

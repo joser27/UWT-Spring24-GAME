@@ -36,7 +36,7 @@ for (let i = 0; i < 70; i++) {
             console.log("Exit here")
             const CaveExit = new Rectangle(i * 104 , j * 104 , 104, 104);
             CaveExit.isCaveExit = true; 
-            CaveExit.isSolid = true; 
+            CaveExit.isSolid = false; 
             boundaries.push(CaveExit);
         }
     }
