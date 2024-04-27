@@ -12,4 +12,4 @@ const gameController = new GameController();
 const gameLoop = new GameLoop(gameController);
 
 gameController.setGameLoop(gameLoop);
-gameLoop.start();
+gameLoop.startGameLoop();

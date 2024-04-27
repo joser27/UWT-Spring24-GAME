@@ -30,70 +30,97 @@ class Game {
             }
         }
     }
+    update() {
+        this.player.update();
+        
+
+        this.slimes.forEach(slime => {
+            slime.update();
+            // Check for player attack collision
+            if (slime.hitBox.intersects(this.player.attackHitBox)) {
+                if (slime.health>0) {
+                    slime.health--;
+                }
+            }
+            // Check if slime is dead
+            if (slime.health <= 0) {
+                slime.isDead = true;
+            }
+        });
+        this.adjustSlimePositions();
+    }
+
     draw() {
-        if (this.player.gaveWizardWand) {
-            GameController.GameState = GAME_STATES.GAME_VICTORY; 
-        }
-
-        if (this.player.hitBox.x<58*104 && this.player.hitBox.y<11*104) {
-            this.playerIsInCave=true;
-            this.caveSound.loop = true;
-            this.caveSound.play();
-            this.isPlayingGameMusic=false
-            this.gameSound.pause();
-        } else {
-            this.playerIsInCave=false;
-            this.playGameMusic();
-            this.caveSound.pause();
-        }
-
-        this.levelLoader.draw()
+        this.levelLoader.draw();
         this.player.draw();
-        if (this.slimes.length>0) {
+        this.slimes.forEach(slime => {
+            slime.draw();
+        });
 
-            this.adjustSlimePositions();
-            if (this.player.health<0) {
-                GameController.GameState = GAME_STATES.GAME_OVER; 
-            }
+        this.levelLoader.drawOverhang();
+        // if (this.player.gaveWizardWand) {
+        //     GameController.GameState = GAME_STATES.GAME_VICTORY; 
+        // }
+
+        // if (this.player.hitBox.x<58*104 && this.player.hitBox.y<11*104) {
+        //     this.playerIsInCave=true;
+        //     this.caveSound.loop = true;
+        //     this.caveSound.play();
+        //     this.isPlayingGameMusic=false
+        //     this.gameSound.pause();
+        // } else {
+        //     this.playerIsInCave=false;
+        //     this.playGameMusic();
+        //     this.caveSound.pause();
+        // }
+
+        // this.levelLoader.draw()
+        // this.player.draw();
+        // if (this.slimes.length>0) {
+
+        //     this.adjustSlimePositions();
+        //     if (this.player.health<0) {
+        //         GameController.GameState = GAME_STATES.GAME_OVER; 
+        //     }
     
-            this.slimes.forEach(slime => {
-                slime.draw();
+            // this.slimes.forEach(slime => {
+            //     slime.draw();
                 
-                // Check for player attack collision
-                if (slime.hitBox.intersects(this.player.attackHitBox)) {
-                    if (slime.health>0) {
-                        slime.health--;
-                    }
-                }
+            //     // Check for player attack collision
+            //     if (slime.hitBox.intersects(this.player.attackHitBox)) {
+            //         if (slime.health>0) {
+            //             slime.health--;
+            //         }
+            //     }
             
-                // Check if slime is dead
-                if (slime.health <= 0) {
-                    slime.isDead = true;
+            //     // Check if slime is dead
+            //     if (slime.health <= 0) {
+            //         slime.isDead = true;
                     
-                }
-            });
+            //     }
+            // });
             
             
-            // Remove dead slimes from the array
-            this.slimes = this.slimes.filter(slime => !slime.isRemoved);
-        } else {
-            this.player.hasWizardsWand=true;
+        //     // Remove dead slimes from the array
+        //     this.slimes = this.slimes.filter(slime => !slime.isRemoved);
+        // } else {
+        //     this.player.hasWizardsWand=true;
             
-        }
+        // }
 
-        this.levelLoader.drawOverhang()
-        if (this.playerIsInCave) {
-            if (this.player.hasWizardsWand) {
-                c.fillStyle = 'rgba(100,100,100,0.5)'
-                c.fillRect(0,GameController.gameHeight/1.5,GameController.gameWidth,GameController.gameHeight)
-                c.drawImage(this.playerImage, GameController.gameWidth/2+100,GameController.gameHeight/2,400,300);
+        // this.levelLoader.drawOverhang()
+        // if (this.playerIsInCave) {
+        //     if (this.player.hasWizardsWand) {
+        //         c.fillStyle = 'rgba(100,100,100,0.5)'
+        //         c.fillRect(0,GameController.gameHeight/1.5,GameController.gameWidth,GameController.gameHeight)
+        //         c.drawImage(this.playerImage, GameController.gameWidth/2+100,GameController.gameHeight/2,400,300);
     
-                c.fillStyle = 'black'
-                c.font = "40px 'Comic Sans MS', sans-serif";
-                c.fillText("I've found the Wizard's Wand!", 30,450,undefined);
+        //         c.fillStyle = 'black'
+        //         c.font = "40px 'Comic Sans MS', sans-serif";
+        //         c.fillText("I've found the Wizard's Wand!", 30,450,undefined);
 
-            }
-        }
+        //     }
+        // }
 
     }
 

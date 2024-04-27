@@ -45,6 +45,9 @@ const keys = {
                 case 'e':
                     Player.UsedInteractKey = true;
                     break 
+                case 'm':
+                    
+                    break 
         }
     })
 

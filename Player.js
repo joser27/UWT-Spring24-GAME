@@ -1,5 +1,5 @@
 
-let isCheating = false;
+let isCheating = true;
 const PlayerConstants = {
     MOVESPEED: 4,
     RUNNING_UP: 4,
@@ -59,27 +59,74 @@ class Player {
     static UsedInteractKey = false;
     static isAttacking = false;
     constructor() {
-
         this.image = new Image();
-        this.image.src = 'Human-Worker-Cyan.png'
-        this.width = this.image.width/24/2;
-        this.height = this.image.height/8/2;
-        this.hitBox = new Rectangle(67*104,3*104,this.width/2,this.height/2);//spawn=67*104,3*104//Cave 7,4
+        this.image.onload = () => {
+            this.width = this.image.width / 24 / 2;
+            this.height = this.image.height / 8 / 2;
+            this.hitBox = new Rectangle(67 * 104, 3 * 104, this.width / 2, this.height / 2);
+            this.attackHitBox = new Rectangle(this.hitBox.x, this.hitBox.y, 50, 50);
+        };
+        this.image.src = 'Human-Worker-Cyan.png';
+
         this.moving = false;
         this.readyToGoOut = false;
         this.canMove = true;
         this.hasMoved = false;
-        this.attackHitBox = new Rectangle(this.hitBox.x,this.hitBox.y,50,50)
         this.hasWizardsWand = false;
         this.gaveWizardWand = false;
 
         this.villagerImage = new Image();
-        this.villagerImage.src = 'images/VillagerProfile1.png'
+        this.villagerImage.src = 'images/VillagerProfile1.png';
 
         this.wizardImage = new Image();
-        this.wizardImage.src = 'images/WizardProfile.png'
+        this.wizardImage.src = 'images/WizardProfile.png';
+
         this.health = 100;
-        this.swordSFX = new Audio('swing-sword.mp3')
+        this.swordSFX = new Audio('swing-sword.mp3');
+    }
+
+    update() {
+        if (Player.isAttacking) {
+            this.swordSFX.play();
+            switch(Animations.facingDir) {
+                case 0:
+                    
+                    this.attackHitBox.x = this.hitBox.x;
+                    this.attackHitBox.y = this.hitBox.y-25;
+                    break;
+                case 1:
+                    
+                    this.attackHitBox.x = this.hitBox.x;
+                    this.attackHitBox.y = this.hitBox.y+15;
+                    break;
+                case 2:
+                    
+                    this.attackHitBox.x = this.hitBox.x-25;
+                    this.attackHitBox.y = this.hitBox.y;
+                    break;
+                case 3:
+                    
+                    this.attackHitBox.x = this.hitBox.x+25;
+                    this.attackHitBox.y = this.hitBox.y;
+                    break;
+                default:
+                    
+                    break;
+            }
+            Animations.aniCol=5
+        } else {
+            
+            this.attackHitBox.x = 0
+            this.attackHitBox.y = 0
+            Animations.aniCol=0
+        }
+        if (!Player.isAttacking && !this.moving) {
+            Animations.aniIndex=0
+        } 
+        this.checkCloseToBorder();
+        if (this.canMove) {
+            this.updatePlayerMovement();
+        }
     }
 
     /*
@@ -89,9 +136,6 @@ class Player {
     */
     draw() {
 
-
-
-        //console.log(this.hitBox.x)
         if (this.hitBox.y<1200 && this.hitBox.x<6000) {
             c.fillStyle = 'red';
             c.strokeRect(this.hitBox.x-20-BoarderOffset.xLvlOffset,this.hitBox.y-80-BoarderOffset.yLvlOffset,100,30)
@@ -180,7 +224,7 @@ class Player {
             
 
         })
-        this.checkCloseToBorder();
+        
         
         c.fillStyle = 'red';
         //c.fillRect(0,0,100,100)
@@ -194,43 +238,6 @@ class Player {
         }
 
 
-        if (Player.isAttacking) {
-            this.swordSFX.play();
-            switch(Animations.facingDir) {
-                case 0:
-                    
-                    this.attackHitBox.x = this.hitBox.x;
-                    this.attackHitBox.y = this.hitBox.y-25;
-                    break;
-                case 1:
-                    
-                    this.attackHitBox.x = this.hitBox.x;
-                    this.attackHitBox.y = this.hitBox.y+15;
-                    break;
-                case 2:
-                    
-                    this.attackHitBox.x = this.hitBox.x-25;
-                    this.attackHitBox.y = this.hitBox.y;
-                    break;
-                case 3:
-                    
-                    this.attackHitBox.x = this.hitBox.x+25;
-                    this.attackHitBox.y = this.hitBox.y;
-                    break;
-                default:
-                    
-                    break;
-            }
-            Animations.aniCol=5
-        } else {
-            
-            this.attackHitBox.x = 0
-            this.attackHitBox.y = 0
-            Animations.aniCol=0
-        }
-        if (!Player.isAttacking && !this.moving) {
-            Animations.aniIndex=0
-        } 
         c.drawImage(
             this.image,  
             this.image.width/24 * (Animations.aniCol + Animations.aniIndex),          
@@ -242,16 +249,14 @@ class Player {
             this.image.width/24,
             this.image.height/8     
         );
-        if (this.canMove) {
-            this.drawPlayerMovement();
-        }
+
         
 
     }
 
 
     
-    drawPlayerMovement() {
+    updatePlayerMovement() {
         this.moving = false;    
         let tempHitBox = new Rectangle(this.hitBox.x, this.hitBox.y, this.hitBox.width, this.hitBox.height);    
         if (keys.w.pressed) {
@@ -327,11 +332,7 @@ class Player {
         
         if (this.moving || Player.isAttacking) {
             this.hasMoved=true;
-            if (GameController.showHitBoxes) {
-                c.fillStyle = 'rgba(0,0,255,0.5)'
-                c.fillRect(tempHitBox.x - BoarderOffset.xLvlOffset,tempHitBox.y - BoarderOffset.yLvlOffset,tempHitBox.width,tempHitBox.height)    
-            }
-            
+        
             Animations.aniTick++;
             if (Animations.aniTick > Animations.aniSpeed) {
                 Animations.aniTick=0;
