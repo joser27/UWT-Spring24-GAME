@@ -6,8 +6,8 @@ class Game {
         this.villager = new Character('Human-Worker-Red.png', 13*104, 30*104)
         this.slime1 = new Slime(51,7,this.player,400);
         this.slime2 = new Slime(51,5,this.player,400);
-        // this.slime3 = new Slime(14,5,this.player);
-        // this.slime4 = new Slime(22,5,this.player);
+        this.slime3 = new Slime(14,5,this.player,400);
+        this.slime4 = new Slime(22,5,this.player,400);
         this.gameSound = new Audio('Forest.wav');
         this.caveSound = new Audio('enter-the-cave.mp3');
         this.bossMusic = new Audio('level-boss.wav');
@@ -22,9 +22,9 @@ class Game {
         this.bossFrames=0;
 
 
-        this.slimes = [this.slime1, this.slime2];
-        this.entities = [this.slime1, this.slime2, this.player];
-        //this.slimes = [this.slime1, this.slime2, this.slime3, this.slime4,];
+        // this.slimes = [this.slime1, this.slime2, this.slime4];
+        this.entities = [this.slime1, this.slime2, this.slime3, this.slime4,this.player];
+        this.slimes = [this.slime1, this.slime2, this.slime3, this.slime4,];
 
     }
 

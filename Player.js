@@ -1,7 +1,7 @@
 
-let isCheating = false;
+let isCheating = true;
 const PlayerConstants = {
-    MOVESPEED: 4,
+    MOVESPEED: 14,
     RUNNING_UP: 4,
     RUNNING_DOWN: 0,
     RUNNING_LEFT: 6,

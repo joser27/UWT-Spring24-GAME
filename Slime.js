@@ -8,7 +8,7 @@ class Slime {
         this.player = Player;
         this.speed = 1;
         this.lineOfSight = lineOfSight;
-        this.health = 1;
+        this.health = 50;
         this.isDead = false;
         this.isRemoved = false;
         this.deathTick=0;
@@ -91,8 +91,16 @@ class Slime {
 
     }
     draw() {
-        c.fillStyle='red'
-        c.fillRect(this.hitBox.x-15-BoarderOffset.xLvlOffset,this.hitBox.y-70-BoarderOffset.yLvlOffset,this.health,30)
+        c.fillStyle = 'red';
+        // Calculate the adjusted width based on the current health
+        var adjustedWidth = (this.health / 50) * 100;
+        c.fillRect(
+            this.hitBox.x - 15 - BoarderOffset.xLvlOffset,
+            this.hitBox.y - 70 - BoarderOffset.yLvlOffset,
+            adjustedWidth,
+            30
+        );        
+        
 
         if (this.isDead) {
 
