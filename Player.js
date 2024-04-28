@@ -1,7 +1,8 @@
 
-let isCheating = true;
+let isCheating = false;
+
 const PlayerConstants = {
-    MOVESPEED: 14,
+    MOVESPEED: isCheating ? 14 : 7,
     RUNNING_UP: 4,
     RUNNING_DOWN: 0,
     RUNNING_LEFT: 6,
@@ -9,7 +10,7 @@ const PlayerConstants = {
     IDLE: 4,
     ATTACK: 5,
     HIT: 6,
-}
+};
 
 const Directions = {
     UP: 0,
@@ -87,6 +88,9 @@ class Player {
     }
 
     update() {
+        isCheating=GameController.enableCheats;
+        
+        
         if (this.health<=0) {
             this.isDead=true;
         }

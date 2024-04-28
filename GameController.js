@@ -12,6 +12,7 @@ class GameController {
     static gameWidth = 1024;
     static gameHeight = 576;
     static showHitBoxes = false;
+    static enableCheats = false;
     static GameState = GAME_STATES.MENU;
     constructor() {
         this.game = new Game();

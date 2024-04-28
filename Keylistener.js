@@ -102,6 +102,28 @@ checkbox.addEventListener('change', function() {
     }
 });
 
+// Create a new checkbox element for cheats
+const cheatCheckbox = document.createElement('input');
+cheatCheckbox.type = 'checkbox';
+cheatCheckbox.id = 'cheatCheckbox'; // Set an ID for the checkbox
+
+// Create a label for the cheat checkbox
+const cheatLabel = document.createElement('label');
+cheatLabel.textContent = 'Cheats';
+
+// Add the cheat checkbox and label to the body
+document.body.appendChild(cheatCheckbox);
+document.body.appendChild(cheatLabel);
+
+// Add event listener to the cheat checkbox
+cheatCheckbox.addEventListener('change', function() {
+    if (this.checked) {
+        GameController.enableCheats = true;
+    } else {
+        GameController.enableCheats = false;
+    }
+});
+
 
 
 
