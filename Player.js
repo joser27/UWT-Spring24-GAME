@@ -1,5 +1,5 @@
 
-let isCheating = true;
+let isCheating = false;
 const PlayerConstants = {
     MOVESPEED: 4,
     RUNNING_UP: 4,
@@ -67,11 +67,12 @@ class Player {
             this.attackHitBox = new Rectangle(this.hitBox.x, this.hitBox.y, 50, 50);
         };
         this.image.src = 'Human-Worker-Cyan.png';
-
+        this.isDead=false;
         this.moving = false;
         this.readyToGoOut = false;
         this.canMove = true;
         this.hasMoved = false;
+        this.spokeWithWizard = false;
         this.hasWizardsWand = false;
         this.gaveWizardWand = false;
 
@@ -86,6 +87,9 @@ class Player {
     }
 
     update() {
+        if (this.health<=0) {
+            this.isDead=true;
+        }
         if (Player.isAttacking) {
             this.swordSFX.play();
             switch(Animations.facingDir) {
@@ -145,10 +149,6 @@ class Player {
         this.introDialog();
         this.wizardDialog();
 
-
-
-
-
         if (GameController.showHitBoxes) {
             c.fillStyle = 'black'
             c.font = "40px 'Comic Sans MS', sans-serif";
@@ -183,31 +183,30 @@ class Player {
                     c.font = "40px 'Comic Sans MS', sans-serif";
                     c.fillText("'E' to Speak ", GameController.gameWidth/2-60, GameController.gameHeight/2/2, 200);
                     if (Player.UsedInteractKey) {
-                        
-                        
+                        this.spokeWithWizard=true;
                         if (this.hasWizardsWand===false) {
-                            console.log("no")
                             WizardScenePointer = 1;
                         } else {
-                            console.log("ya")
                             WizardScenePointer = 7;
                         }
                     }
                 }
             }
-
-            if (boundary.isCaveEntrance) {
-                if (this.hitBox.intersects(boundary)) {
-                    c.fillStyle = 'black'
-                    c.font = "40px 'Comic Sans MS', sans-serif";
-                    c.fillText("'E' to Enter Cave", GameController.gameWidth/2-60, GameController.gameHeight/2/2, 200);
-                    if (Player.UsedInteractKey) {
-                        this.hitBox.x = 7*104;
-                        this.hitBox.y = 4*104;
+            if (this.spokeWithWizard) {
+                if (boundary.isCaveEntrance) {
+                    if (this.hitBox.intersects(boundary)) {
+                        c.fillStyle = 'black'
+                        c.font = "40px 'Comic Sans MS', sans-serif";
+                        c.fillText("'E' to Enter Cave", GameController.gameWidth/2-60, GameController.gameHeight/2/2, 200);
+                        if (Player.UsedInteractKey) {
+                            this.hitBox.x = 7*104;
+                            this.hitBox.y = 4*104;
+                        }
+                        
                     }
-                    
                 }
             }
+
 
             if (boundary.isCaveExit) {
                 if (this.hitBox.intersects(boundary)) {

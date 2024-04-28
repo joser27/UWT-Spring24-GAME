@@ -11,7 +11,9 @@ for (let i = 0; i < 70; i++) {
     for (let j = 0; j < 40; j++) {
         const cellValue = collisionsMap[j][i];
         if (cellValue === 131 || cellValue === 2228) {
-            boundaries.push(new Rectangle(i * 104 , j * 104 , 104, 104));
+            const borderRectangle = new Rectangle(i * 104 , j * 104 , 104, 104);
+            borderRectangle.isSolid = true; 
+            boundaries.push(borderRectangle);
         }
         if (cellValue === 158) {
             const entranceRectangle = new Rectangle(i * 104 , j * 104 , 104, 104);
@@ -41,6 +43,31 @@ for (let i = 0; i < 70; i++) {
         }
     }
 }
+
+function addCollisionBlock(k, l) {
+    const block = new Rectangle(k * 104, l * 104, 104, 104);
+    block.isSolid = true;
+    boundaries.push(block);
+}
+function addBossRoomLock() {
+    const block0 = new Rectangle(42 * 104, 4 * 104, 104, 104);
+    const block1 = new Rectangle(42 * 104, 5 * 104, 104, 104);
+    const block2 = new Rectangle(42 * 104, 6 * 104, 104, 104);
+    block0.isSolid = true;
+    block1.isSolid = true;
+    block2.isSolid = true;
+    boundaries.push(block0);
+    boundaries.push(block1);
+    boundaries.push(block2);
+}
+function removeBossRoomLock() {
+    boundaries.pop(); 
+    boundaries.pop(); 
+    boundaries.pop(); 
+}
+
+
+
 
 console.log("Boundaries array:", boundaries);
 console.log(boundaries.length);
@@ -83,19 +110,21 @@ class LevelLoader {
 
             if (GameController.showHitBoxes) {
                 
-                for (let i = 0; i < 70; i++) {
-                    for (let j = 0; j < 40; j++) {
-                        const cellValue = collisionsMap[j][i];
-                        if (cellValue === 131 || cellValue === 2228) {
-                            c.fillStyle = 'rgba(255,0,0,0.3)'
-                            c.fillRect(i * 104 - BoarderOffset.xLvlOffset, j * 104 - BoarderOffset.yLvlOffset, 104, 104);
-                        }
-                        if (cellValue === 157) {
-                            c.fillStyle = 'rgba(0,0,255,0.3)'
-                            c.fillRect(i * 104 - BoarderOffset.xLvlOffset, j * 104 - BoarderOffset.yLvlOffset, 104, 104);
-                        }
-                    }
-                }
+                // for (let i = 0; i < 70; i++) {
+                //     for (let j = 0; j < 40; j++) {
+                //         const cellValue = collisionsMap[j][i];
+                //         if (cellValue && !cellValue.isSolid) {
+                //             c.fillStyle = 'rgba(255,0,0,0.3)'
+                //             c.fillRect(i * 104 - BoarderOffset.xLvlOffset, j * 104 - BoarderOffset.yLvlOffset, 104, 104);
+                //         }
+                //     }
+                // }
+                // Draw all rectangles from the boundaries array
+                boundaries.forEach(rectangle => {
+                    c.fillStyle = 'rgba(0,0,255,0.3)';
+                    c.fillRect(rectangle.x - BoarderOffset.xLvlOffset, rectangle.y - BoarderOffset.yLvlOffset, rectangle.width, rectangle.height);
+                });
+                
             }
 
 

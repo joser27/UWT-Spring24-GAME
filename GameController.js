@@ -25,7 +25,9 @@ class GameController {
 
 
     update() {
-        this.game.update();
+        if (GameController.GameState === GAME_STATES.PLAYING) {
+            this.game.update();
+        }
     }
     draw() {
         c.fillStyle = 'white'
