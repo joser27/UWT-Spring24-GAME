@@ -12,14 +12,16 @@ class Game {
         this.caveSound = new Audio('enter-the-cave.mp3');
         this.bossMusic = new Audio('level-boss.wav');
         this.bossLaughter = new Audio('boss-laughter.mp3');
-        this.playerIsInCave = false;
-        this.playerImage = new Image();
-        this.playerImage.src = 'images/VillagerProfile2.png'
+  
         this.slayedAllSlimes = false;
         this.addedFinalStageBlocker=false;
         this.isPlayingGameMusic = false;
         this.bossTick=0;
         this.bossFrames=0;
+        this.wandHitBox = new Rectangle(0,0,10,10);
+
+        this.wandImage = new Image();
+        this.wandImage.src = 'wood earth wand.png'
 
 
         // this.slimes = [this.slime1, this.slime2, this.slime4];
@@ -39,6 +41,11 @@ class Game {
         }
     }
     update() {
+        if (this.player.isInCave && !this.player.isFightingBoss) {
+            this.caveSound.play();
+        } else if (this.player.isFightingBoss) {
+            this.caveSound.pause();
+        }
         if (this.player.isDead) {
             GameController.GameState = GAME_STATES.GAME_OVER;
         }
@@ -59,7 +66,9 @@ class Game {
             }
         }
 
-        if (!this.slimeBoss.bossDeathMode) {
+
+        //slime boss
+        if (!this.slimeBoss.bossEscapeMode && !this.slimeBoss.isRemoved) {
             if (this.slayedAllSlimes && this.player.hitBox.x/104 > 43) {
                 if (!this.addedFinalStageBlocker) {
                     addBossRoomLock();
@@ -68,32 +77,81 @@ class Game {
                 }
                 this.bossTick++;
                 this.slimeBoss.update();
-                if (this.bossTick>300) {    
+                if (this.bossTick>300 && !this.slimeBoss.isDead) {    
                         this.bossMusic.play();
                 }
                 
             }
-        } else {
-            this.slimeBoss.update();
+        } else if (!this.slimeBoss.isRemoved) {
+                
+                this.wandHitBox.x = this.slimeBoss.hitBox.x;
+                this.wandHitBox.y = this.slimeBoss.hitBox.y;
+                this.slimeBoss.update();
+        }
+        
+
+        if (this.player.hitBox.intersects(this.wandHitBox)) {
+            this.player.hasWizardsWand=true;
+            this.wandHitBox.x =0;
+            this.wandHitBox.y =0;
         }
 
-        
 
         
     }
 
     draw() {
         this.levelLoader.draw();
+        if (GameController.showHitBoxes) {
+            c.fillStyle='blue'
+            c.fillRect(this.wandHitBox.x-BoarderOffset.xLvlOffset,this.wandHitBox.y-BoarderOffset.yLvlOffset,this.wandHitBox.width,this.wandHitBox.height)
+            
+        }
+
+        // draw wand
+        if (this.slimeBoss.isRemoved) {
+            c.drawImage(
+                this.wandImage,
+                this.wandHitBox.x-BoarderOffset.xLvlOffset,
+                this.wandHitBox.y-BoarderOffset.yLvlOffset,
+                this.wandImage.width*2,
+                this.wandImage.height*2)
+        }
         this.player.draw();
         if (this.addedFinalStageBlocker) {
-            this.slimeBoss.draw();
+            if (!this.slimeBoss.isRemoved) {
+                this.slimeBoss.draw();
+            }
+            
         }
-        
+
+
+        //c.drawImage(this.wandImage, this.wandCoord.x-BoarderOffset.xLvlOffset,this.wandCoord.y-BoarderOffset.yLvlOffset)
         this.slimes.forEach(slime => {
             slime.draw();
         });
 
         this.levelLoader.drawOverhang();
+
+        if (this.player.isInCave && this.player.hasWizardsWand) {
+            c.fillStyle = 'rgba(100,100,100,0.5)'
+            c.fillRect(0,GameController.gameHeight/1.5,GameController.gameWidth,GameController.gameHeight)
+            c.drawImage(this.player.playerImage, GameController.gameWidth/2+100,GameController.gameHeight/2,400,300);
+            c.fillStyle = 'black'
+            c.font = "30px 'Comic Sans MS', sans-serif";
+            c.fillText("I've found the Wizard's Wand!", 30,450,undefined);
+            c.fillText("I should give it back to him!", 30,480,undefined);
+        }
+
+        if (this.slimeBoss.enterFinalMode && !this.slimeBoss.isDead) {
+            c.fillStyle = 'rgba(100,100,100,0.5)'
+            c.fillRect(0,GameController.gameHeight/1.5,GameController.gameWidth,GameController.gameHeight)
+            c.drawImage(this.player.playerImage, GameController.gameWidth/2+100,GameController.gameHeight/2,400,300);
+
+            c.fillStyle = 'black'
+            c.font = "30px 'Comic Sans MS', sans-serif";
+            c.fillText("The Slime Goblin is making a run for it!", 30,450,undefined);
+        }
 
 
     }

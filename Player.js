@@ -2,7 +2,7 @@
 let isCheating = false;
 
 const PlayerConstants = {
-    MOVESPEED: isCheating ? 14 : 7,
+    MOVESPEED: 4,
     RUNNING_UP: 4,
     RUNNING_DOWN: 0,
     RUNNING_LEFT: 6,
@@ -37,7 +37,6 @@ const BoarderOffset = { //1024x576
     yLvlOffset: 0,
     topBorder: (0.5 * 576),
     bottomBorder: (0.5 * 576),
-
 }
 
 
@@ -70,13 +69,17 @@ class Player {
         this.image.src = 'Human-Worker-Cyan.png';
         this.isDead=false;
         this.moving = false;
+        this.isInCave = false;
         this.readyToGoOut = false;
         this.canMove = true;
         this.hasMoved = false;
         this.spokeWithWizard = false;
         this.hasWizardsWand = false;
+        
         this.gaveWizardWand = false;
-
+        this.isFightingBoss=false;
+        this.playerImage = new Image();
+        this.playerImage.src = 'images/VillagerProfile2.png'
         this.villagerImage = new Image();
         this.villagerImage.src = 'images/VillagerProfile1.png';
 
@@ -88,6 +91,11 @@ class Player {
     }
 
     update() {
+        if (this.hitBox.y<1200 && this.hitBox.x<6000) {
+            this.isInCave=true;
+        } else {
+            this.isInCave=false;
+        }
         isCheating=GameController.enableCheats;
         
         
@@ -144,7 +152,9 @@ class Player {
     */
     draw() {
 
-        if (this.hitBox.y<1200 && this.hitBox.x<6000) {
+
+
+        if (this.isInCave) {
             c.fillStyle = 'red';
             c.strokeRect(this.hitBox.x-20-BoarderOffset.xLvlOffset,this.hitBox.y-80-BoarderOffset.yLvlOffset,100,30)
             c.fillRect(this.hitBox.x-20-BoarderOffset.xLvlOffset,this.hitBox.y-80-BoarderOffset.yLvlOffset,this.health,30)

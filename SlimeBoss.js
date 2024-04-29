@@ -14,10 +14,11 @@ class SlimeBoss {
         this.image.onload = () => {
             this.width = this.image.width / 24 / 2;
             this.height = this.image.height / 8 / 2;
-            this.hitBox = new Rectangle(53 * 104, 6 * 104, this.width / 2, this.height / 2);
+            //this.hitBox = new Rectangle(55 * 104, 5 * 104, this.width / 2, this.height / 2);
         };
         this.bossMusic = new Audio('level-boss.wav');
         this.bossLaughter = new Audio('boss-laughter.mp3');
+        this.bossDeadSound = new Audio('death-sound-boss.wav');
         this.image.src = 'Orc-Peon-Cyan(1).png';
         this.aniIndex=0;
         this.aniSpeed=10;
@@ -25,8 +26,10 @@ class SlimeBoss {
         this.aniCol=21;
         this.greenBulletImage = new Image();
         this.greenBulletImage.src = 'projectiles/bolt1_strip.png'
-        this.hitBox = new Rectangle(0,0,104,104);
+        this.hitBox = new Rectangle(0,0,60,60);
         this.isDead=false;
+        this.isRemoved=false;
+        this.movespeed = 3;
 
         this.bullet0 = new Rectangle(55 * 104, 4 * 104, 104/2, 104/2);
         this.bullet1 = new Rectangle(55 * 104, 6 * 104, 104/2, 104/2);
@@ -43,7 +46,7 @@ class SlimeBoss {
         this.bullet10 = new Rectangle(63 * 104, 8 * 104, 104/2, 104/2);
         this.bullet11 = new Rectangle(63 * 104, 10 * 104, 104/2, 104/2);
         this.enterFinalMode=false;
-        this.bossDeathMode=false;
+        this.bossEscapeMode=false;
         this.bullets = [this.bullet0,this.bullet1,this.bullet2,this.bullet3,this.bullet4,this.bullet5,this.bullet6,this.bullet7,this.bullet8,this.bullet9,this.bullet10,this.bullet11];
 
         this.facingDir=0;//0,1,2,3, Up down left right
@@ -63,7 +66,7 @@ class SlimeBoss {
     }
 
     update() {
-        if (!this.isDead) {
+        
             this.bullets.forEach(bullet => {
                 if (this.player.hitBox.intersects(bullet)) {
                     this.player.health--;
@@ -72,6 +75,7 @@ class SlimeBoss {
             
             this.fightPhaseTick++;
             if (this.fightPhaseTick < 1300 && this.fightPhaseTick > 300) {
+                this.player.isFightingBoss=true;
                 console.log("PHASE 1")
                 this.introductionPhase();
             } else if (this.fightPhaseTick > 1300) {
@@ -81,16 +85,27 @@ class SlimeBoss {
                 this.slimes = this.slimes.filter(slime => !slime.isRemoved);
             }
             if (this.slimes.length<=0) {
+                
                 this.finalFightPhase();
             }
-            if (this.bossDeathMode) {
-                
+
+            if (this.bossEscapeMode) {
+                if (this.hitBox.x<7*104) {
+                    GameController.GameState=GAME_STATES.GAME_OVER;
+                }
+                if (this.hitBox.intersects(this.player.attackHitBox)) {
+                    this.isDead=true;
+                    this.aniTick=0;
+                    this.aniCol=20;
+                }
+
+
                 if (this.hitBox.x!=6*104) {
-                    this.hitBox.x-=1
+                    this.hitBox.x-=this.movespeed;
                 }
-                if (this.hitBox.y!=4*104) {
-                    this.hitBox.y-=1
-                }
+
+                
+
                 this.aniTick++;
                 if (this.aniTick > this.aniSpeed) {
                     this.aniTick=0;
@@ -100,9 +115,20 @@ class SlimeBoss {
                     }
                 }
             }
-        }
-
-
+            if (this.isDead) {
+                this.player.isFightingBoss=false;
+                this.bossDeadSound.play();
+                this.bossEscapeMode=false;
+                this.aniTick++;
+                if (this.aniTick > 10) {
+                    this.aniTick=0;
+                    this.aniIndex++;
+                    if (this.aniIndex > 4) {
+                        this.aniIndex = 0;
+                        this.isRemoved=true;
+                    }
+                }
+            }
 
     }
 
@@ -186,7 +212,7 @@ class SlimeBoss {
                 bullet.x -= 4;
                 bullet.y += amplitude * Math.sin(frequency * bullet.x);
             } else {
-                let amplitude = 4; // Adjust this to make the wave higher or lower
+                let amplitude = 10; // Adjust this to make the wave higher or lower
                 let frequency = 0.05; // Adjust this to make the wave more or less compact
                 
                 bullet.x += 4;
@@ -204,27 +230,27 @@ class SlimeBoss {
             slimes.update();
             adjustSlimePositions(this.entities)
         })
-        // this.bullets.forEach(bullet => {
-        //     if (bullet.x<42*104) {
-        //         bulletsVariables.hasReachedLeft=true;
-        //     }
-        //     if (!bulletsVariables.hasReachedLeft) {
-        //         let amplitude = 2; // Adjust this to make the wave higher or lower
-        //         let frequency = 0.01; // Adjust this to make the wave more or less compact
+        this.bullets.forEach(bullet => {
+            if (bullet.x<42*104) {
+                bulletsVariables.hasReachedLeft=true;
+            }
+            if (!bulletsVariables.hasReachedLeft) {
+                let amplitude = 2; // Adjust this to make the wave higher or lower
+                let frequency = 0.01; // Adjust this to make the wave more or less compact
                 
-        //         bullet.x -= 4;
-        //         bullet.y += amplitude * Math.sin(frequency * bullet.x);
-        //     } else {
-        //         let amplitude = 4; // Adjust this to make the wave higher or lower
-        //         let frequency = 0.05; // Adjust this to make the wave more or less compact
+                bullet.x -= 1;
+                bullet.y += amplitude * Math.sin(frequency * bullet.x);
+            } else {
+                let amplitude = 4; // Adjust this to make the wave higher or lower
+                let frequency = 0.05; // Adjust this to make the wave more or less compact
                 
-        //         bullet.x += 4;
-        //         bullet.y -= amplitude * Math.sin(frequency * bullet.x);
-        //         if (bullet.x > 57*104) {
-        //             bulletsVariables.hasReachedLeft=false;
-        //         }
-        //     }
-        // });
+                bullet.x += 1;
+                bullet.y -= amplitude * Math.sin(frequency * bullet.x);
+                if (bullet.x > 57*104) {
+                    bulletsVariables.hasReachedLeft=false;
+                }
+            }
+        });
         
         
         
@@ -235,10 +261,13 @@ class SlimeBoss {
             removeBossRoomLock();
             this.enterFinalMode=true;
             this.bullets.splice(0, this.bullets.length);
-            this.hitBox.x=49*104;
-            this.hitBox.y=6*104;
-            this.bossDeathMode=true;
+            this.hitBox.x=55*104;
+            this.hitBox.y=4*104;
+            this.bossEscapeMode=true;
             this.aniCol=0;
+            this.facingDir=0;
+
+
         }
     }
 }
