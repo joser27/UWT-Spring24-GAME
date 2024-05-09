@@ -3,15 +3,15 @@ class Game {
         this.levelLoader = new LevelLoader();
         this.player = new Player();
         this.slimeBoss = new SlimeBoss(this.player);
-        this.villager = new Character('Human-Worker-Red.png', 13*104, 30*104)
+        this.villager = new Character('images/Human-Worker-Red.png', 13*104, 30*104)
         this.slime1 = new Slime(51,7,this.player,400);
         this.slime2 = new Slime(51,5,this.player,400);
         this.slime3 = new Slime(14,5,this.player,400);
         this.slime4 = new Slime(22,5,this.player,400);
-        this.gameSound = new Audio('Forest.wav');
-        this.caveSound = new Audio('enter-the-cave.mp3');
-        this.bossMusic = new Audio('level-boss.wav');
-        this.bossLaughter = new Audio('boss-laughter.mp3');
+        this.gameSound = new Audio('audio/Forest.wav');
+        this.caveSound = new Audio('audio/enter-the-cave.mp3');
+        this.bossMusic = new Audio('audio/level-boss.wav');
+        this.bossLaughter = new Audio('audio/boss-laughter.mp3');
   
         this.slayedAllSlimes = false;
         this.addedFinalStageBlocker=false;
@@ -21,7 +21,7 @@ class Game {
         this.wandHitBox = new Rectangle(0,0,10,10);
 
         this.wandImage = new Image();
-        this.wandImage.src = 'wood earth wand.png'
+        this.wandImage.src = 'images/wood earth wand.png'
 
 
         // this.slimes = [this.slime1, this.slime2, this.slime4];

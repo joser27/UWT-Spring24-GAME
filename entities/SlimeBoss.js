@@ -16,16 +16,16 @@ class SlimeBoss {
             this.height = this.image.height / 8 / 2;
             //this.hitBox = new Rectangle(55 * 104, 5 * 104, this.width / 2, this.height / 2);
         };
-        this.bossMusic = new Audio('level-boss.wav');
-        this.bossLaughter = new Audio('boss-laughter.mp3');
-        this.bossDeadSound = new Audio('death-sound-boss.wav');
-        this.image.src = 'Orc-Peon-Cyan(1).png';
+        this.bossMusic = new Audio('audio/level-boss.wav');
+        this.bossLaughter = new Audio('audio/boss-laughter.mp3');
+        this.bossDeadSound = new Audio('audio/death-sound-boss.wav');
+        this.image.src = 'images/Orc-Peon-Cyan(1).png';
         this.aniIndex=0;
         this.aniSpeed=10;
         this.aniTick=0;
         this.aniCol=21;
         this.greenBulletImage = new Image();
-        this.greenBulletImage.src = 'projectiles/bolt1_strip.png'
+        this.greenBulletImage.src = 'images/bolt1_strip.png'
         this.hitBox = new Rectangle(0,0,60,60);
         this.isDead=false;
         this.isRemoved=false;

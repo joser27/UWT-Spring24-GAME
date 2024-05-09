@@ -88,10 +88,10 @@ class LevelLoader {
             this.height = 576;
 
             this.image = new Image();
-            this.image.src = 'mapZoomedv12.png';
+            this.image.src = 'images/mapZoomedv12.png';
 
             this.overHangImage = new Image();
-            this.overHangImage.src = 'Overhang.png';
+            this.overHangImage.src = 'images/Overhang.png';
             //console.log(collisionsMap)
         }
 

@@ -66,7 +66,7 @@ class Player {
             this.hitBox = new Rectangle(67 * 104, 3 * 104, this.width / 2, this.height / 2);
             this.attackHitBox = new Rectangle(this.hitBox.x, this.hitBox.y, 50, 50);
         };
-        this.image.src = 'Human-Worker-Cyan.png';
+        this.image.src = 'images/Human-Worker-Cyan.png';
         this.isDead=false;
         this.moving = false;
         this.isInCave = false;
@@ -87,7 +87,7 @@ class Player {
         this.wizardImage.src = 'images/WizardProfile.png';
 
         this.health = 100;
-        this.swordSFX = new Audio('swing-sword.mp3');
+        this.swordSFX = new Audio('audio/swing-sword.mp3');
     }
 
     update() {

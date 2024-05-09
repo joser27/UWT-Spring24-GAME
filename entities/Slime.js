@@ -3,7 +3,7 @@
 class Slime {
     constructor(x,y, Player, lineOfSight){
         this.image = new Image();
-        this.image.src = 'Slime.png';
+        this.image.src = 'images/Slime.png';
         this.hitBox = new Rectangle(x*104,y*104,80,40)
         this.player = Player;
         this.speed = 1;
@@ -15,7 +15,7 @@ class Slime {
         this.deathAni=9;
         this.playedDeathSound = false;
 
-        this.deathSound = new Audio('splat-sound.mp3');
+        this.deathSound = new Audio('audio/splat-sound.mp3');
         this.playedSound = false;
         this.aniTick=0;
         this.aniIndex=0;
