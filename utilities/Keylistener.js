@@ -15,7 +15,8 @@ const keys = {
 
     
     window.addEventListener('keydown', (e) => {
-            switch(e.key) {
+        const key = e.key.toLowerCase();
+            switch(key) {
                 case 'w':
                     keys.w.pressed = true;
                     
@@ -52,7 +53,8 @@ const keys = {
     })
 
     window.addEventListener('keyup', (e) => {
-        switch(e.key) {
+        const key = e.key.toLowerCase();
+        switch(key) {
             case 'w':
                 keys.w.pressed = false;
                 break
