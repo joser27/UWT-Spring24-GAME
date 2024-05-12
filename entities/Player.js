@@ -2,7 +2,6 @@
 let isCheating = false;
 
 const PlayerConstants = {
-    MOVESPEED: 14,
     RUNNING_UP: 4,
     RUNNING_DOWN: 0,
     RUNNING_LEFT: 6,
@@ -67,6 +66,7 @@ class Player {
             this.attackHitBox = new Rectangle(this.hitBox.x, this.hitBox.y, 50, 50);
         };
         this.image.src = 'images/Human-Worker-Cyan.png';
+        this.moveSpeed = 4;
         this.isDead=false;
         this.moving = false;
         this.isInCave = false;
@@ -270,13 +270,17 @@ class Player {
 
     
     updatePlayerMovement() {
+        if (isCheating) {
+            this.moveSpeed=14
+            this.health=100
+        } 
         this.moving = false;    
         let tempHitBox = new Rectangle(this.hitBox.x, this.hitBox.y, this.hitBox.width, this.hitBox.height);    
         if (keys.w.pressed) {
             this.moving = true;
             Animations.facingDir = 0;
             Animations.playerDir = PlayerConstants.RUNNING_UP;
-            tempHitBox.y = tempHitBox.y - PlayerConstants.MOVESPEED;
+            tempHitBox.y = tempHitBox.y - this.moveSpeed;
             boundaries.forEach(boundary => {
                 if (tempHitBox.intersects(boundary) && boundary.isSolid) {
                     if (!isCheating) {
@@ -287,14 +291,14 @@ class Player {
             
 
             if (this.moving) {
-                this.hitBox.y -= PlayerConstants.MOVESPEED;
+                this.hitBox.y -= this.moveSpeed;
             }
         }
         if (keys.a.pressed) {
             this.moving = true;
             Animations.playerDir = PlayerConstants.RUNNING_LEFT;
             Animations.facingDir = 2;
-            tempHitBox.x = tempHitBox.x - PlayerConstants.MOVESPEED;
+            tempHitBox.x = tempHitBox.x - this.moveSpeed;
             boundaries.forEach(boundary => {
                 if (tempHitBox.intersects(boundary) && boundary.isSolid) {
                     if (!isCheating) {
@@ -303,7 +307,7 @@ class Player {
                 }
             }) 
             if (this.moving) {
-                this.hitBox.x-= PlayerConstants.MOVESPEED;
+                this.hitBox.x-=this.moveSpeed;
             }
             
         }
@@ -311,7 +315,7 @@ class Player {
             this.moving = true;
             Animations.playerDir = PlayerConstants.RUNNING_DOWN;
             Animations.facingDir = 1;
-            tempHitBox.y = tempHitBox.y + PlayerConstants.MOVESPEED;
+            tempHitBox.y = tempHitBox.y + this.moveSpeed;
             boundaries.forEach(boundary => {
                 if (tempHitBox.intersects(boundary) && boundary.isSolid) {
                     if (!isCheating) {
@@ -321,14 +325,14 @@ class Player {
             }) 
 
             if (this.moving) {
-                this.hitBox.y+= PlayerConstants.MOVESPEED;
+                this.hitBox.y+= this.moveSpeed;
             }
         }
         if (keys.d.pressed) {
             this.moving = true;
             Animations.playerDir = PlayerConstants.RUNNING_RIGHT;
             Animations.facingDir = 3;
-            tempHitBox.x = tempHitBox.x + PlayerConstants.MOVESPEED;
+            tempHitBox.x = tempHitBox.x + this.moveSpeed;
             boundaries.forEach(boundary => {
                 if (tempHitBox.intersects(boundary) && boundary.isSolid) {
                     if (!isCheating) {
@@ -339,7 +343,7 @@ class Player {
             }) 
 
             if (this.moving) {
-                this.hitBox.x+= PlayerConstants.MOVESPEED;
+                this.hitBox.x+= this.moveSpeed;
             }
         }
         
