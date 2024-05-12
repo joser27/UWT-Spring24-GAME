@@ -9,6 +9,7 @@ class Game {
         this.slime3 = new Slime(14,5,this.player,400);
         this.slime4 = new Slime(22,5,this.player,400);
         this.gameSound = new Audio('audio/Forest.wav');
+        this.gameSound.volume = 0.5; // Set volume to 50%
         this.caveSound = new Audio('audio/enter-the-cave.mp3');
         this.bossMusic = new Audio('audio/level-boss.wav');
         this.bossLaughter = new Audio('audio/boss-laughter.mp3');
@@ -41,11 +42,20 @@ class Game {
         }
     }
     update() {
+
+        // Check for audio
         if (this.player.isInCave && !this.player.isFightingBoss) {
             this.caveSound.play();
+            this.gameSound.pause();
         } else if (this.player.isFightingBoss) {
             this.caveSound.pause();
+        } else {
+            this.caveSound.pause();
+            this.gameSound.play();
         }
+
+
+        // Check if dead
         if (this.player.isDead) {
             GameController.GameState = GAME_STATES.GAME_OVER;
         }
@@ -94,6 +104,10 @@ class Game {
             this.player.hasWizardsWand=true;
             this.wandHitBox.x =0;
             this.wandHitBox.y =0;
+        }
+
+        if (this.player.gaveWizardWand) {
+            GameController.GameState = GAME_STATES.GAME_VICTORY;
         }
 
 

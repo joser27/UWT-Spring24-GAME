@@ -15,6 +15,12 @@ class Celebration {
 
     draw() {
         c.drawImage(this.image3, 0, 0, 1024, 576);
+        c.drawImage(this.image3, 0, 0, 1024, 576);
+        c.fillStyle = 'rgba(255,255,255,0.6 )'
+        c.fillRect(0,GameController.gameHeight/1.5,GameController.gameWidth,GameController.gameHeight)
+        c.fillStyle = 'black'
+        c.font = "60px 'Comic Sans MS', sans-serif";
+        c.fillText("Thanks for playing!", 1024/2-300,576/2+200,undefined)
         // if (introSceneArray[scenePointer]===1) {
         //     c.drawImage(this.image, 0, 0, 1024, 576);
         // }

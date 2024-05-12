@@ -16,6 +16,7 @@ class Slime {
         this.playedDeathSound = false;
 
         this.deathSound = new Audio('audio/splat-sound.mp3');
+        this.deathSound.volume = 0.3
         this.playedSound = false;
         this.aniTick=0;
         this.aniIndex=0;
